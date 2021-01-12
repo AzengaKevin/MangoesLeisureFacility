@@ -7,8 +7,7 @@ import java.util.List;
 @Entity
 @Table(name = "memberships")
 @NamedQueries({
-        @NamedQuery(name = "Membership.findByName", query = "SELECT m FROM Membership m WHERE m.name = :name"),
-        @NamedQuery(name = "Membership.findAll", query = "SELECT m FROM Membership m")
+        @NamedQuery(name = "Membership.findByName", query = "SELECT m FROM Membership m WHERE m.name = :name")
 })
 public class Membership {
 
@@ -60,5 +59,10 @@ public class Membership {
 
     public void setMembers(List<Member> members) {
         this.members = members;
+    }
+
+    @Override
+    public String toString() {
+        return "Membership(name=" + name + ", fee=" + fee + ')';
     }
 }

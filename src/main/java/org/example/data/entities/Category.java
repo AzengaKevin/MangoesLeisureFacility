@@ -56,4 +56,8 @@ public class Category {
         this.members = members;
     }
 
+    @Override
+    public String toString() {
+        return "Category(name=" + name + ')';
+    }
 }

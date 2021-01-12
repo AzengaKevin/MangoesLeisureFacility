@@ -118,4 +118,17 @@ public class Member implements Serializable {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "Member(" +
+                ", name='" + name +
+                ", email='" + email +
+                ", phone='" + phone +
+                ", grade=" + grade +
+                ", bankAccountNumber=" + bankAccountNumber +
+                ", membership=" + membership +
+                ", category=" + category +
+                ')';
+    }
 }

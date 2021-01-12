@@ -19,7 +19,7 @@ public class Membership {
     private String name;
     private Double fee;
 
-    @OneToMany(mappedBy = "membership")
+    @OneToMany(mappedBy = "membership", cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 
     public Membership() {

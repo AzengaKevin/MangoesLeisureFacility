@@ -6,6 +6,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "memberships")
+@NamedQueries({
+        @NamedQuery(name = "Membership.findByName", query = "SELECT m FROM Membership m WHERE m.name = :name"),
+        @NamedQuery(name = "Membership.findAll", query = "SELECT m FROM Membership m")
+})
 public class Membership {
 
     @Id

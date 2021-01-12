@@ -6,6 +6,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
+@NamedQueries({
+        @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
+        @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c")
+})
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

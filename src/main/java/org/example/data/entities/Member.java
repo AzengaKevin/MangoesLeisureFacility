@@ -5,6 +5,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "members")
+
+@NamedQueries({
+        @NamedQuery(name = "Member.findByEmail", query = "SELECT m FROM Member m WHERE m.email = :email"),
+        @NamedQuery(name = "Member.findByPhone", query = "SELECT m FROM Member m WHERE m.phone = :phone"),
+        @NamedQuery(name = "Member.findAll", query = "SELECT m FROM Member m")
+})
 public class Member implements Serializable {
 
     @Id

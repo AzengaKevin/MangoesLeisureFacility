@@ -1,14 +1,13 @@
 package org.example.ui;
 
-import org.example.data.entities.Category;
-import org.example.data.entities.Membership;
+import org.example.data.entities.*;
 import org.example.data.repositories.CategoryRepository;
+import org.example.data.repositories.MemberRepository;
 import org.example.data.repositories.MembershipRepository;
+import org.example.data.repositories.StaffRepository;
 import org.example.ui.registration.RegistrationPanel;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -121,15 +120,110 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
         frame.setVisible(true);
     }
 
-    public JFrame getFrame() {
-        return frame;
-    }
-
     @Override
     public void onButtonItemClicked(RegistrationPanel.Item item) {
 
         if (item.equals(RegistrationPanel.Item.Categories)) showCategoriesTable();
         if (item.equals(RegistrationPanel.Item.Memberships)) showMemberShipsTable();
+        if (item.equals(RegistrationPanel.Item.Members)) showMembersTable();
+        if (item.equals(RegistrationPanel.Item.Staff)) showStaffTable();
+    }
+
+    private void showStaffTable() {
+        StaffRepository staffRepository = new StaffRepository(em);
+
+        SwingWorker<List<Staff>, Void> getStaffWorker = new SwingWorker<>() {
+            @Override
+            protected List<Staff> doInBackground() throws Exception {
+
+                return staffRepository.findAll();
+
+            }
+
+            @Override
+            protected void done() {
+
+                try {
+                    List<Staff> staffList = get();
+
+                    String[] tableHeaders = {"ID", "Name", "Title", "Part Time", "Temporary", "Trained"};
+                    Object[][] tableData = new Object[staffList.size()][tableHeaders.length];
+
+                    for (int i = 0; i < staffList.size(); i++) {
+
+                        Staff staff = staffList.get(i);
+
+                        tableData[i][0] = staff.getId();
+                        tableData[i][1] = staff.getName();
+                        tableData[i][2] = staff.getStaffTitle().toString();
+                        tableData[i][3] = staff.getPartTime();
+                        tableData[i][4] = staff.getTemporary();
+                        tableData[i][5] = staff.getTrained();
+
+                    }
+
+                    theMainPanel.removeAll();
+                    JTable table = new JTable(tableData, tableHeaders);
+
+                    theMainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+                    theMainPanel.updateUI();
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        getStaffWorker.execute();
+    }
+
+    private void showMembersTable() {
+        MemberRepository memberRepository = new MemberRepository(em);
+
+        SwingWorker<List<Member>, Void> getMembersWorker = new SwingWorker<>() {
+            @Override
+            protected List<Member> doInBackground() throws Exception {
+                return memberRepository.findAll();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    List<Member> members = get();
+
+                    String[] tableHeaders = {"Name", "Email", "Phone", "Bank Acc/No", "Membership", "Category"};
+
+                    Object[][] tableData = new Object[members.size()][tableHeaders.length];
+
+                    for (int i = 0; i < members.size(); i++) {
+                        Member member = members.get(i);
+
+                        tableData[i][0] = member.getName();
+                        tableData[i][1] = member.getEmail();
+                        tableData[i][2] = member.getPhone();
+                        tableData[i][3] = member.getBankAccountNumber();
+                        tableData[i][4] = member.getMembership().getName();
+                        tableData[i][5] = (member.getCategory() != null) ? member.getCategory().getName() : "N/A";
+
+                        theMainPanel.removeAll();
+
+                        JTable table = new JTable(tableData, tableHeaders);
+
+                        theMainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+                        theMainPanel.updateUI();
+
+                    }
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        getMembersWorker.execute();
     }
 
     private void showMemberShipsTable() {

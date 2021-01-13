@@ -1,6 +1,7 @@
 package org.example.data.entities;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,10 @@ public class Membership {
 
     public void setFee(Double fee) {
         this.fee = fee;
+    }
+
+    public String getFormattedFee() {
+        return String.format("%.2f", this.fee);
     }
 
     public List<Member> getMembers() {

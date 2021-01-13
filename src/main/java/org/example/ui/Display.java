@@ -1,18 +1,31 @@
 package org.example.ui;
 
+import org.example.data.entities.Category;
+import org.example.data.entities.Membership;
+import org.example.data.repositories.CategoryRepository;
+import org.example.data.repositories.MembershipRepository;
 import org.example.ui.registration.RegistrationPanel;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class Display {
+public class Display implements RegistrationPanel.RegistrationButtonListener {
 
     private JFrame frame;
     private final String title;
     private final int width;
     private final int height;
     private JPanel theMainPanel;
+
+
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("MLF");
+    private final EntityManager em = emf.createEntityManager();
 
     public Display(String title, int width, int height) {
 
@@ -83,7 +96,7 @@ public class Display {
     private void showRegistrationPanel() {
 
         theMainPanel.removeAll();
-        theMainPanel.add(new RegistrationPanel());
+        theMainPanel.add(new RegistrationPanel(this));
 
         theMainPanel.updateUI();
 
@@ -110,5 +123,106 @@ public class Display {
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    @Override
+    public void onButtonItemClicked(RegistrationPanel.Item item) {
+
+        if (item.equals(RegistrationPanel.Item.Categories)) showCategoriesTable();
+        if (item.equals(RegistrationPanel.Item.Memberships)) showMemberShipsTable();
+    }
+
+    private void showMemberShipsTable() {
+
+        MembershipRepository membershipRepository = new MembershipRepository(em);
+
+        SwingWorker<List<Membership>, Void> getMembershipsWorker = new SwingWorker<>() {
+            @Override
+            protected List<Membership> doInBackground() throws Exception {
+                return membershipRepository.findAll();
+            }
+
+            @Override
+            protected void done() {
+
+                try {
+
+                    List<Membership> memberships = get();
+
+                    String[] tableHeaders = {"ID", "Name", "Fee"};
+
+                    Object[][] tableData = new Object[memberships.size()][tableHeaders.length];
+
+                    for (int i = 0; i < memberships.size(); i++) {
+                        Membership membership = memberships.get(i);
+                        tableData[i][0] = membership.getId();
+                        tableData[i][1] = membership.getName();
+                        tableData[i][2] = membership.getFormattedFee();
+                    }
+
+                    theMainPanel.removeAll();
+
+                    JTable categoriesTable = new JTable(tableData, tableHeaders);
+
+                    theMainPanel.add(new JScrollPane(categoriesTable), BorderLayout.CENTER);
+
+                    theMainPanel.updateUI();
+
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        getMembershipsWorker.execute();
+    }
+
+    private void showCategoriesTable() {
+
+        CategoryRepository categoryRepository = new CategoryRepository(em);
+
+        SwingWorker<List<Category>, Void> getCategoriesWorker = new SwingWorker<>() {
+            @Override
+            protected List<Category> doInBackground() throws Exception {
+                return categoryRepository.findAll();
+            }
+
+            @Override
+            protected void done() {
+
+                try {
+
+                    List<Category> categories = get();
+
+                    String[] tableHeaders = {"ID", "Name"};
+
+                    Object[][] tableData = new Object[categories.size()][tableHeaders.length];
+
+                    for (int i = 0; i < categories.size(); i++) {
+                        Category category = categories.get(i);
+                        tableData[i][0] = category.getId();
+                        tableData[i][1] = category.getName();
+                    }
+
+                    theMainPanel.removeAll();
+
+                    JTable categoriesTable = new JTable(tableData, tableHeaders);
+
+                    theMainPanel.add(new JScrollPane(categoriesTable), BorderLayout.CENTER);
+
+                    theMainPanel.updateUI();
+
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        getCategoriesWorker.execute();
+
     }
 }

@@ -1,7 +1,6 @@
 package org.example.data.entities;
 
 import javax.persistence.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 

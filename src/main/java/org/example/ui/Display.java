@@ -5,6 +5,8 @@ import org.example.data.repositories.CategoryRepository;
 import org.example.data.repositories.MemberRepository;
 import org.example.data.repositories.MembershipRepository;
 import org.example.data.repositories.StaffRepository;
+import org.example.ui.registration.AddCategoryDialog;
+import org.example.ui.registration.AddMembershipDialog;
 import org.example.ui.registration.RegistrationPanel;
 
 import javax.persistence.*;
@@ -105,6 +107,7 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
 
         JMenuBar theMenuBar = new JMenuBar();
 
+        //File Menu
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(item -> System.exit(0));
@@ -112,6 +115,19 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
         fileMenu.add(fileMenu);
 
         theMenuBar.add(fileMenu);
+
+        //Registration Menu
+        JMenu registrationMenu = new JMenu("Registration");
+
+        JMenuItem addCategoryMenuItem = new JMenuItem("Add Category");
+        addCategoryMenuItem.addActionListener(e -> new AddCategoryDialog(frame, "Add Category", em));
+        registrationMenu.add(addCategoryMenuItem);
+
+        JMenuItem addMembershipMenuItem = new JMenuItem("Add Membership");
+        addMembershipMenuItem.addActionListener(e -> new AddMembershipDialog(frame, "Add Membership", em));
+        registrationMenu.add(addMembershipMenuItem);
+
+        theMenuBar.add(registrationMenu);
 
         frame.setJMenuBar(theMenuBar);
     }

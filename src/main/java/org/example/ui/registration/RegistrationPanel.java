@@ -1,6 +1,5 @@
 package org.example.ui.registration;
 
-import org.example.ui.Display;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
@@ -9,7 +8,7 @@ import java.awt.*;
 
 public class RegistrationPanel extends JPanel {
 
-    private RegistrationButtonListener listener;
+    private final RegistrationButtonListener listener;
 
     public enum Item {Categories, Memberships, Members, Staff}
 
@@ -60,16 +59,16 @@ public class RegistrationPanel extends JPanel {
     }
 
     private void initComponents() {
-        browseCategoriesButton.addActionListener(e -> listener.onButtonItemClicked(Item.Categories));
-        browseMembershipsButton.addActionListener(e -> listener.onButtonItemClicked(Item.Memberships));
-        browseMembersButton.addActionListener(e -> listener.onButtonItemClicked(Item.Members));
-        browseStaffsButton.addActionListener(e -> listener.onButtonItemClicked(Item.Staff));
+        browseCategoriesButton.addActionListener(e -> listener.onRegistrationItemClicked(Item.Categories));
+        browseMembershipsButton.addActionListener(e -> listener.onRegistrationItemClicked(Item.Memberships));
+        browseMembersButton.addActionListener(e -> listener.onRegistrationItemClicked(Item.Members));
+        browseStaffsButton.addActionListener(e -> listener.onRegistrationItemClicked(Item.Staff));
 
     }
 
     public interface RegistrationButtonListener {
 
-        void onButtonItemClicked(Item item);
+        void onRegistrationItemClicked(Item item);
 
     }
 }

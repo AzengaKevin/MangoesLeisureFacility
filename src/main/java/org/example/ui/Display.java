@@ -1,13 +1,8 @@
 package org.example.ui;
 
 import org.example.data.entities.*;
-import org.example.data.repositories.CategoryRepository;
-import org.example.data.repositories.MemberRepository;
-import org.example.data.repositories.MembershipRepository;
-import org.example.data.repositories.StaffRepository;
-import org.example.ui.registration.AddCategoryDialog;
-import org.example.ui.registration.AddMembershipDialog;
-import org.example.ui.registration.RegistrationPanel;
+import org.example.data.repositories.*;
+import org.example.ui.registration.*;
 
 import javax.persistence.*;
 import javax.swing.*;
@@ -16,7 +11,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class Display implements RegistrationPanel.RegistrationButtonListener {
+public class Display implements RegistrationPanel.RegistrationButtonListener, BookingPanel.BookingItemListener {
 
     private JFrame frame;
     private final String title;
@@ -70,7 +65,9 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
 
         JButton registrationModuleButton = new JButton("Registration Module");
         registrationModuleButton.addActionListener(e -> showRegistrationPanel());
+
         JButton bookingModuleButton = new JButton("Booking Module");
+        bookingModuleButton.addActionListener(e -> showBookingPanel());
 
         JButton paymentsModuleButton = new JButton("Payment Module");
 
@@ -92,6 +89,14 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
 
         frame.add(theMainPanel, BorderLayout.CENTER);
 
+    }
+
+    private void showBookingPanel() {
+
+        theMainPanel.removeAll();
+        theMainPanel.add(new BookingPanel(this));
+
+        theMainPanel.updateUI();
     }
 
     private void showRegistrationPanel() {
@@ -129,6 +134,15 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
 
         theMenuBar.add(registrationMenu);
 
+        //Booking Menu
+        JMenu bookingMenu = new JMenu("Booking");
+
+        JMenuItem addFacilityMenuItem = new JMenuItem("Add Facility");
+        addFacilityMenuItem.addActionListener(e -> new AddFacilityDialog(frame, "Add Facility", em));
+        bookingMenu.add(addFacilityMenuItem);
+
+        theMenuBar.add(bookingMenu);
+
         frame.setJMenuBar(theMenuBar);
     }
 
@@ -137,7 +151,7 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
     }
 
     @Override
-    public void onButtonItemClicked(RegistrationPanel.Item item) {
+    public void onRegistrationItemClicked(RegistrationPanel.Item item) {
 
         if (item.equals(RegistrationPanel.Item.Categories)) showCategoriesTable();
         if (item.equals(RegistrationPanel.Item.Memberships)) showMemberShipsTable();
@@ -334,5 +348,58 @@ public class Display implements RegistrationPanel.RegistrationButtonListener {
 
         getCategoriesWorker.execute();
 
+    }
+
+    @Override
+    public void onBookingItemClicked(BookingPanel.Item item) {
+
+
+        if (item.equals(BookingPanel.Item.Facilities)) showFacilitiesTable();
+        System.out.println(item.toString());
+    }
+
+    private void showFacilitiesTable() {
+
+        FacilityRepository facilityRepository = new FacilityRepository(em);
+
+        SwingWorker<List<Facility>, Void> getAllFacilitiesWorker = new SwingWorker<>() {
+            @Override
+            protected List<Facility> doInBackground() throws Exception {
+                return facilityRepository.findAll();
+            }
+
+            @Override
+            protected void done() {
+                try {
+
+                    List<Facility> facilities = get();
+
+                    String[] tableHeaders = {"ID", "Name", "Activities"};
+
+                    Object[][] tableData = new Object[facilities.size()][tableHeaders.length];
+
+                    for (int i = 0; i < facilities.size(); i++) {
+                        Facility facility = facilities.get(i);
+                        tableData[i][0] = facility.getId();
+                        tableData[i][1] = facility.getName();
+                        tableData[i][2] = facility.getActivities();
+                    }
+
+                    theMainPanel.removeAll();
+
+                    JTable table = new JTable(tableData, tableHeaders);
+
+                    theMainPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+
+                    theMainPanel.updateUI();
+
+
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        getAllFacilitiesWorker.execute();
     }
 }

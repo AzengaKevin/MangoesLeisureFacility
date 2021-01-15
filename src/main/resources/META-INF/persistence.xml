@@ -18,7 +18,8 @@
             <property name="javax.persistence.jdbc.user" value="student"/>
             <property name="javax.persistence.jdbc.password" value="turtledove"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
-            <!-- <property name="hibernate.hbm2ddl.auto" value="update"/> -->
+            <property name="hibernate.connection.autocommit" value="true"/>
+            <!--<property name="hibernate.hbm2ddl.auto" value="update"/>-->
             <property name="show_sql" value="true"/>
             <property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
         </properties>

@@ -13,9 +13,6 @@ public class App {
 
     public static void main(String[] args) {
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("MLF");
-        EntityManager em = emf.createEntityManager();
-
         Display display = new Display("Mangoes Leisure Facility", 600, 400);
 
         display.show();

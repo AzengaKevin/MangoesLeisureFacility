@@ -1,4 +1,4 @@
-package org.example.ui.registration;
+package org.example.ui.booking;
 
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;

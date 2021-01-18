@@ -2,6 +2,8 @@ package org.example.ui;
 
 import org.example.data.entities.*;
 import org.example.data.repositories.*;
+import org.example.ui.booking.AddFacilityDialog;
+import org.example.ui.booking.BookingPanel;
 import org.example.ui.registration.*;
 
 import javax.persistence.*;
@@ -61,6 +63,13 @@ public class Display implements RegistrationPanel.RegistrationButtonListener, Bo
         theMainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         theMainPanel.setLayout(new BorderLayout());
 
+        showWelcomeBox();
+
+        frame.add(theMainPanel, BorderLayout.CENTER);
+    }
+
+    private void showWelcomeBox() {
+
         Box vBox = Box.createVerticalBox();
 
         JButton registrationModuleButton = new JButton("Registration Module");
@@ -85,10 +94,11 @@ public class Display implements RegistrationPanel.RegistrationButtonListener, Bo
         paymentsModuleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         vBox.add(Box.createVerticalStrut(20));
 
+        theMainPanel.removeAll();
+
         theMainPanel.add(vBox, BorderLayout.CENTER);
 
-        frame.add(theMainPanel, BorderLayout.CENTER);
-
+        theMainPanel.updateUI();
     }
 
     private void showBookingPanel() {
@@ -132,6 +142,10 @@ public class Display implements RegistrationPanel.RegistrationButtonListener, Bo
         addMembershipMenuItem.addActionListener(e -> new AddMembershipDialog(frame, "Add Membership", em));
         registrationMenu.add(addMembershipMenuItem);
 
+        JMenuItem addMemberMenuItem = new JMenuItem("Add Member");
+        addMemberMenuItem.addActionListener(e -> new AddMemberDialog(frame, "Add Member"));
+        registrationMenu.add(addMemberMenuItem);
+
         theMenuBar.add(registrationMenu);
 
         //Booking Menu
@@ -142,6 +156,15 @@ public class Display implements RegistrationPanel.RegistrationButtonListener, Bo
         bookingMenu.add(addFacilityMenuItem);
 
         theMenuBar.add(bookingMenu);
+
+        ///Window Menu
+        JMenu windowMenu = new JMenu("Window");
+
+        JMenuItem welcomeMenuItem = new JMenuItem("Welcome");
+        welcomeMenuItem.addActionListener(e -> showWelcomeBox());
+        windowMenu.add(welcomeMenuItem);
+
+        theMenuBar.add(windowMenu);
 
         frame.setJMenuBar(theMenuBar);
     }

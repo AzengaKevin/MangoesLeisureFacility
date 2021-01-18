@@ -1,4 +1,4 @@
-package org.example.ui.registration;
+package org.example.ui.booking;
 
 import org.example.data.entities.Facility;
 import org.example.data.repositories.FacilityRepository;
